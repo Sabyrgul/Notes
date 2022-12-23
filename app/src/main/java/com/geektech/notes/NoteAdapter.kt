@@ -15,11 +15,16 @@ class NoteAdapter: RecyclerView.Adapter<NoteAdapter.ViewHolder>(){
         notifyItemInserted(list.size)
     }
 
-    class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         var text=itemView.findViewById<TextView>(R.id.item_text)
 
         fun bind(message: String){
            text.text=message
+            text.setOnLongClickListener {
+                list.removeAt(adapterPosition)
+                notifyItemRemoved(list.size)
+                return@setOnLongClickListener true
+            }
         }
     }
 

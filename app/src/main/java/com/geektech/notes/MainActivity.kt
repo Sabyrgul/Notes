@@ -24,9 +24,13 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter=adapter
 
         button.setOnClickListener {
-            editText.text.isEmpty()
-            editText.error="Error"
+            if(editText.text.isEmpty()) {
+                editText.error = "Error"
+            }
+            else  {
                 adapter.addNote(editText.text.toString())
+            editText.text.clear()
+            }
         }
     }
 }
