@@ -2,35 +2,49 @@ package com.geektech.notes
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import androidx.recyclerview.widget.RecyclerView
+import com.geektech.notes.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
-    lateinit var recyclerView: RecyclerView
-    lateinit var editText: EditText
-    lateinit var button: Button
+class MainActivity : AppCompatActivity(), IItemClick {
+  private lateinit var binding: ActivityMainBinding
     lateinit var adapter: NoteAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding=ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        recyclerView=findViewById(R.id.main_recycler)
-        editText=findViewById(R.id.edit_note)
-        button=findViewById(R.id.add_note)
-        adapter=NoteAdapter()
 
-        recyclerView.adapter=adapter
+        adapter=NoteAdapter(this)
 
-        button.setOnClickListener {
-            if(editText.text.isEmpty()) {
-                editText.error = "Error"
+        binding.mainRecycler.adapter=adapter
+
+        binding.addNote.setOnClickListener {
+            if(binding.editNote.text.isEmpty()) {
+                binding.editNote.error = "Error"
             }
             else  {
-                adapter.addNote(editText.text.toString())
-            editText.text.clear()
+                val note=Note(binding.editNote.text.toString(),binding.editNoteDesc.text.toString())
+                adapter.addNote(note)
+            binding.editNote.text.clear()
+            binding.editNoteDesc.text.clear()
             }
+        }
+    }
+
+    override fun delete(pos: Int) {
+     adapter.delete(pos)
+    }
+
+    override fun edit(pos: Int) {
+      binding.editNote.setText(adapter.getList()[pos].title)
+        binding.editNoteDesc.setText(adapter.getList()[pos].desc)
+        binding.addNote.text = "edit"
+        binding.addNote.setOnClickListener {
+            val note=Note(binding.editNote.text.toString(),binding.editNoteDesc.text.toString())
+            adapter.edit(pos,note)
+            binding.addNote.text = "add"
+            binding.editNote.text.clear()
+            binding.editNoteDesc.text.clear()
         }
     }
 }
